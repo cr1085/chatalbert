@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify
 import os
 
-# Configura tu clave API de OpenAI
-# openai.api_key = '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'
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
