@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot - Albert Einstein</title>
+    <link rel="stylesheet" href="/static/css/index.css">
+</head>
+<body >
+    <div class="chat-container">
+        <h2>Chatbot - Albert Einstein</h2>
+        <div class="chat-box" id="chat-box">
+            <!-- Aquí aparecerán los mensajes -->
+        </div>
+
+          <!-- Animación de loading -->
+          <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Cargando respuesta...</p>
+        </div>
+
+        <input type="text" id="user-input" class="user-input" placeholder="Escribe tu mensaje..." />
+        <button onclick="sendMessage()">Enviar</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("user-input").value;
+            const chatBox = document.getElementById("chat-box");
+            const loadingElement = document.getElementById("loading");
+            
+            // Mostrar el mensaje del usuario en la caja de chat
+            chatBox.innerHTML += `<div class="message user-message">
+                    <img src="/static/images/user.png" alt="Usuario">
+                    <p><strong>Tú:</strong> ${userInput}</p>
+                </div>`;
+
+                // Mostrar el spinner de loading
+            loadingElement.style.display = "block";
+
+
+            // Enviar el mensaje al backend (Flask)
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ prompt: userInput }),
+            });
+
+
+              // Ocultar el spinner de loading cuando se obtenga la respuesta
+              loadingElement.style.display = "none";
+
+            // Obtener la respuesta del chatbot
+            const data = await response.json();
+            const botResponse = data.response;
+
+            // Mostrar la respuesta del chatbot en la caja de chat
+            chatBox.innerHTML += `<div class="message chatbot-message">
+                    <img src="/static/images/albert.png" alt="Albert Einstein">
+                    <p><strong>Albert Einstein:</strong> ${botResponse}</p>
+                </div>`;
+
+            // Limpiar el input del usuario
+            document.getElementById("user-input").value = "";
+
+            // Desplazar hacia abajo para ver el nuevo mensaje
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
